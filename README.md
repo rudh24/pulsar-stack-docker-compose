@@ -14,6 +14,8 @@ This is similar to the fullstack [kafka docker-compose deployment](https://githu
   git clone https://github.com/rudh24/pulsar-stack-docker-compose
   cd pulsar-stack-docker-compose/
   docker-compose up -d
+  
+  bash down.sh -> tears down the cluster and removes the volumes
 ```
   Pulsar brokers are exposed via the proxy at 
   ```

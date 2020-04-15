@@ -12,7 +12,7 @@ services:
     volumes:
       - ./zoo1/data:/pulsar/data/zookeeper/
       - ./zoo1/log/:/pulsar/logs
-      - ./zookeeper/config:/config
+      - ./conf:/config
     command: /bin/bash "/config/start_zk.sh"
     
   zoo2:
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./zoo2/data:/pulsar/data/zookeeper/
       - ./zoo2/log/:/pulsar/logs
-      - ./zookeeper/config:/config
+      - ./conf:/config
     command: /bin/bash "/config/start_zk.sh"
 
   zoo3:
@@ -40,7 +40,7 @@ services:
     volumes:
       - ./zoo3/data:/pulsar/data/zookeeper/
       - ./zoo3/log/:/pulsar/logs
-      - ./zookeeper/config:/config
+      - ./conf:/config
     command: /bin/bash "/config/start_zk.sh"
 
   bookie1:
@@ -49,12 +49,13 @@ services:
     ports:
       - "3181:3181"
     environment:
-        BOOKIE_CONF: /conf/bookkeeper.conf
+        BOOKIE_CONF: /pulsar/conf/bookkeeper.conf
     volumes:
       - ./bookie1/data:/pulsar/data/bookkeeper/
       - ./bookie1/log/:/pulsar/logs
-      - ./bookkeeper/conf:/conf
-    command: /bin/bash "/conf/start_mainbk.sh"
+      - ./conf:/pulsar/conf
+      - ./scripts:/scripts
+    command: /bin/bash "/scripts/start_mainbk.sh"
     depends_on:
       - zoo1
       - zoo2
@@ -66,12 +67,13 @@ services:
     ports:
       - "3182:3181"
     environment:
-        BOOKIE_CONF: /conf/bookkeeper.conf
+        BOOKIE_CONF: /pulsar/conf/bookkeeper.conf
     volumes:
       - ./bookie2/data:/pulsar/data/bookkeeper/
       - ./bookie2/log/:/pulsar/logs
-      - ./bookkeeper/conf:/conf
-    command: /bin/bash "/conf/start_otherbk.sh"
+      - ./conf:/pulsar/conf
+      - ./scripts:/scripts
+    command: /bin/bash "/scripts/start_otherbk.sh"
     depends_on:
       - bookie1
 
@@ -81,12 +83,13 @@ services:
     ports:
       - "3183:3181"
     environment:
-        BOOKIE_CONF: /conf/bookkeeper.conf
+        BOOKIE_CONF: /pulsar/conf/bookkeeper.conf
     volumes:
       - ./bookie3/data:/pulsar/data/bookkeeper/
       - ./bookie3/log/:/pulsar/logs
-      - ./bookkeeper/conf:/conf
-    command: /bin/bash "/conf/start_otherbk.sh"
+      - ./conf:/pulsar/conf
+      - ./scripts:/scripts
+    command: /bin/bash "/scripts/start_otherbk.sh"
     depends_on:
       - bookie1
 
@@ -94,15 +97,16 @@ services:
     image: apachepulsar/pulsar:2.4.1
     hostname: broker1
     environment:
-        PULSAR_BROKER_CONF: /conf/broker.conf
+        PULSAR_BROKER_CONF: /pulsar/conf/broker.conf
     ports:
       - "6660:6650"
       - "8090:8080"
     volumes:
       - ./broker1/data:/pulsar/data/broker/
       - ./broker1/log/:/pulsar/logs
-      - ./broker/conf:/conf
-    command: /bin/bash "/conf/start_broker.sh"
+      - ./conf:/pulsar/conf
+      - ./scripts:/scripts
+    command: /bin/bash "/scripts/start_broker.sh"
     depends_on:
       - bookie1
       - bookie2
@@ -119,8 +123,9 @@ services:
     volumes:
       - ./broker2/data:/pulsar/data/broker/
       - ./broker2/log/:/pulsar/logs
-      - ./broker/conf:/conf
-    command: /bin/bash "/conf/start_broker.sh"
+      - ./conf:/pulsar/conf
+      - ./scripts:/scripts
+    command: /bin/bash "/scripts/start_broker.sh"
     depends_on:
       - bookie1
       - bookie2
@@ -133,11 +138,12 @@ services:
       - "6650:6650"
       - "8080:8080"
     environment:
-        PULSAR_PROXY_CONF: "/conf/proxy.conf"
+        PULSAR_PROXY_CONF: "/pulsar/conf/proxy.conf"
     volumes:
       - ./proxy/log/:/pulsar/logs
-      - ./broker/conf:/conf
-    command: /bin/bash "/conf/start_proxy.sh"
+      - ./conf:/pulsar/conf
+      - ./scripts:/scripts
+    command: /bin/bash "/scripts/start_proxy.sh"
     depends_on:
       - broker1
       - broker2
